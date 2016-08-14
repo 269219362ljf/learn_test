@@ -1,0 +1,9 @@
+1 git config --global user.name '269219362ljf' 设置用户名
+2 git config --global user.email '269219362ljf@gmail.com' 设置邮箱
+3 git config --list 查看设置
+4 git init 初始化仓库
+5 git add . 添加所有改动到暂存区
+6 git commit -m '注释' 添加到仓库
+7 git rm 删除文件
+8 git clone http://仓库位置 克隆操作
+9 git push 将本地仓库提交到远程仓库
