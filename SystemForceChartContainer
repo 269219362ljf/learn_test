@@ -1,0 +1,115 @@
+import React from 'react';
+import {Row,Col,Card} from 'antd';
+
+import {connect} from 'react-redux';
+import {LOADSYSFORCEDATA,loadSysForceData} from "../actions";
+import systemdata from "../testdata/systemdata";
+import ForceChart from "../components/charts/ForceChart";
+
+export function SystemForceDataReducer(state={},action){
+    switch (action.type) {
+        case LOADSYSFORCEDATA:return Object.assign({},state,{data:transformData(action.data)});
+        default:return state;
+    }
+}
+
+//将action的数据进行转化
+function transformData(data){
+    return data;
+}
+
+const mapStateToProps=(state)=>{
+    return {sysForceData:state.sysForceData.data};
+};
+
+const mapDispatchToProps=(dispatch)=>{
+    return {
+        loadSysForceData:(data)=>dispatch(loadSysForceData(data))
+    }
+};
+
+
+
+
+
+class SystemForceChartContainer extends React.Component{
+    constructor(props){
+        super(props);
+        this.data=this.loadSystemdata();
+    }
+
+    loadSystemdata(){
+        const data1 = systemdata;
+        return this.transformdata(data1);
+    }
+
+    transformdata(data){
+        const result={};
+        let nodes = [];
+        for (let i = 0; i < data.nodes.length; i++) {
+            nodes[i] = {};
+            nodes[i].name = data.nodes[i];
+        }
+        result.nodes = nodes;
+        let edges = [];
+        for (let i = 0; i < data.lines.length; i++) {
+            edges[i] = {};
+            edges[i].source = data.nodes.indexOf(data.lines[i].start);
+            edges[i].target = data.nodes.indexOf(data.lines[i].end);
+            edges[i].value = data.lines[i].value;
+            edges[i].relation = "响应时间：30ms_"+data.lines[i].start+"_"+data.lines[i].end;
+        }
+        result.edges = edges;
+        return result;
+    }
+
+    componentDidMount() {
+        const data1 = systemdata;
+        let node=data1.nodes.pop();
+        let lines=data1.lines.filter((line)=>{return line.start==node||line.end==node?false:true});
+        console.log("lines",lines);
+        let newdata={
+            nodes:data1.nodes,
+            lines:lines
+        };
+        console.log("pop node",node);
+        console.log("newdata",newdata);
+        //查询数据
+        this.props.loadSysForceData(this.transformdata(newdata));
+    }
+
+    componentDidUpdate() {
+
+
+    }
+
+    render(){
+        let data=JSON.parse(JSON.stringify(this.props.sysForceData?this.props.sysForceData:this.data));
+
+        console.log("test render data",data);
+        return(
+            <div className={"gutter-example simple-force-chart-demo"}>
+                <Row gutter={10}>
+                    <Col className={"gutter-row"} md={24}>
+                        <div className={"gutter-box"}>
+                            <Card title={"风控系统拓扑图"} bordered={false}>
+                                <ForceChart data={data} />
+                            </Card>
+                        </div>
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
+
+
+
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(SystemForceChartContainer);
+
+
+
+
+
+
