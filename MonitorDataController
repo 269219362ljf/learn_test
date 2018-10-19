@@ -1,0 +1,59 @@
+import io.swagger.annotations.ApiOperation;
+import me.ele.rmonitorapi.model.TestModel;
+import me.ele.rmonitorapi.model.TestResult;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/monitorData")
+public class MonitorDataController {
+
+
+//http://localhost:8080/monitorData/a
+
+@RequestMapping(value="{testdata}",method = RequestMethod.GET)
+    @ApiOperation(value = "测试连接",httpMethod = "GET",response = TestModel.class)
+    public HttpEntity<TestResult> testConnection(@PathVariable("testdata") String testdata){
+    TestResult result=new TestResult();
+    TestModel testData=new TestModel();
+    testData.setId(testdata);
+    result.setData(testData);
+    HttpHeaders headers=new HttpHeaders();
+    headers.setAccessControlAllowOrigin("*");
+    return new ResponseEntity<TestResult>(result,headers, HttpStatus.OK);
+}
+
+//http://localhost:8080/monitorData/free?type=2
+    @RequestMapping(value="free",method = RequestMethod.GET)
+    @ApiOperation(value = "测试连接",httpMethod = "GET",response = TestModel.class)
+    public HttpEntity<TestResult> testPath(@RequestParam(value="type",defaultValue = "0") String type){
+        TestResult result=new TestResult();
+        TestModel testData=new TestModel();
+        testData.setId(type);
+        result.setData(testData);
+        HttpHeaders headers=new HttpHeaders();
+        headers.setAccessControlAllowOrigin("*");
+        return new ResponseEntity<TestResult>(result,headers, HttpStatus.OK);
+    }
+
+    @RequestMapping("/queryData")
+    public HttpEntity<TestResult> testPath1(@RequestParam(value="type",defaultValue = "1") String type){
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+}
